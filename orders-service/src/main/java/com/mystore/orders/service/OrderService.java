@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class OrderService {
@@ -21,15 +22,25 @@ public class OrderService {
     @Autowired
     private DiscoveryClient discoveryClient ;
 
+	 @Autowired
+	  private RestTemplate restTemplate;
     public OrderResponse placeOrder(OrderRequest orderRequest) {
+		        Product product = restTemplate.getForObject(GET_PROD_URL, Product.class, orderRequest.getProductId());
 
-        // TODO: 1. retrieve the product details from the product-service
+		        if (product == null) {
+		            throw new RuntimeException("Product not found for ID: " + orderRequest.getProductId());
+		        }
 
-
-        // TODO: 2. process the order (total price should be = quantity ordered * product price)
-
-
-        // TODO: 3. return the response
+		        // Step 2: Calculate total price
+		        double totalPrice = product.getPrice() * orderRequest.getQty();
+		        // Step 3: Create and return order response
+		        return new OrderResponse(
+		        		ThreadLocalRandom.current().nextLong(100000, 999999), // generate unique order ID
+		                product.getId(),
+		                orderRequest.getQty(),
+		                product.getName(),
+		                totalPrice
+		        );
 
     }
 

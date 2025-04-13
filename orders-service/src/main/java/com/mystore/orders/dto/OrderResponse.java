@@ -8,7 +8,16 @@ public class OrderResponse {
     private String productName;
     private Double totalPrice;
 
-    public Long getOrderId() {
+    public OrderResponse(Long orderId, Integer productId, Integer qty, String productName, Double totalPrice) {
+		super();
+		this.orderId = orderId;
+		this.productId = productId;
+		this.qty = qty;
+		this.productName = productName;
+		this.totalPrice = totalPrice;
+	}
+
+	public Long getOrderId() {
         return orderId;
     }
 
